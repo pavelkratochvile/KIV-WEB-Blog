@@ -15,6 +15,10 @@ class LoginController
         $user = $this->userModel->getUserWithLogin($login);
         if($user && password_verify($password, $user['password'])){
             $_SESSION['login'] = $login;
+            $_SESSION['userRole'] = $user['role_id'];
+            $_SESSION['userId'] = $user['user_id'];
+            $_SESSION['name'] = $user['name'];
+            $_SESSION['surname'] = $user['surname'];
             header("Location: home.php");
             exit();
         }

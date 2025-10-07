@@ -1,0 +1,9 @@
+# IDE a konfigurace
+.idea/
+
+# Node.js modules
+node_modules/
+
+# Lock a package soubory (pokud je nechceš v repo)
+package-lock.json
+package.json

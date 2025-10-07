@@ -15,7 +15,7 @@ class UserModel
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-    public function insertToDatabase($name, $surname, $login, $email, $password) {
+    public function insertUserToDatabase($name, $surname, $login, $email, $password) {
         $sql = "INSERT INTO user (name, surname, login, email, password, role_id)VALUES (:name, :surname, :login, :email, :password, :role_id)";
         $stmt = $this->conn->prepare($sql);
         return $stmt->execute([
@@ -25,6 +25,18 @@ class UserModel
             ':email' => $email,
             ':password' => $password,
             ':role_id' => 1
+        ]);
+    }
+    public function insertArticleToDatabase($article_name, $abstract, $file)
+    {
+        $sql = "INSERT INTO article(user_id, article_name, abstract, state,	file)VALUES (:user_id, :article_name, :abstract, :state, :file)";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([
+            'user_id' => $_SESSION['userId'],
+            ':article_name' => $article_name,
+            ':abstract' => $abstract,
+            ':state' => 2,
+            ':file' => $file
         ]);
     }
 }

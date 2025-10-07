@@ -17,7 +17,7 @@ class RegisterController
         else{
             $user = $this->userModel->getUserWithLogin($login);
             if(!$user){
-                if($this->userModel->insertToDatabase($name, $surname, $login, $email, $password)){
+                if($this->userModel->insertUserToDatabase($name, $surname, $login, $email, $password)){
                     return "Register success!";
                 }
                 else{
