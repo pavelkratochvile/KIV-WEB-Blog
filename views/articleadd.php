@@ -1,22 +1,23 @@
 <?php
 session_start();
-use model\UserModel;
-use controllers\ArticleAddController;
+use model\ArticleModel;
+use controllers\ArticleController;
 
 global $conn;
 include("../dbconfig.php");
-include("../controllers/ArticleAddController.php");
+include("../controllers/ArticleController.php");
 
 $message = "";
-$userModel = new UserModel($conn);
-$articleAddController = new ArticleAddController($userModel);
+$articleModel = new ArticleModel($conn);
+$articleAddController = new ArticleController($articleModel);
 
 if(isset($_POST['add-article'])){
     $articleName = $_POST['articleName'];
     $abstract = $_POST['abstract'];
     $file = $_POST['file'];
+    $authors = $_POST['authors'];
 
-    $message = $articleAddController->addArticle($articleName, $abstract, $file);
+    $message = $articleAddController->addArticle($articleName, $abstract, $file, $authors);
 }
 
 ?>
@@ -30,10 +31,10 @@ if(isset($_POST['add-article'])){
 <body>
 <nav class="navbar">
     <div class="navbar-brand">
-        <a href="home.php">Moje Webová Stránka</a>
+        <a href="user-home-page.php">Moje Webová Stránka</a>
     </div>
     <ul class="navbar-menu">
-        <li><a href="home.php">Home</a></li>
+        <li><a href="user-home-page.php">Home</a></li>
         <?php if(isset($_SESSION['login'])): ?>
             <li>
                 <?php echo htmlspecialchars($_SESSION['name'] . " " . $_SESSION['surname']); ?>
@@ -55,12 +56,15 @@ if(isset($_POST['add-article'])){
             <label for="articleName">Název článku</label>
             <input type="text" id="articleName" name="articleName" required>
 
+            <label for="authors">Jména autorů</label>
+            <input type="text" id="authors" name="authors" required>
+
             <label for="abstract">Obsah</label>
             <textarea id="abstract" name="abstract" rows="6" required></textarea>
 
             <label for="file">Soubor</label>
             <div class="custom-file">
-                <input type="file" id="file" name="file" required>
+                <input type="text" id="file" name="file" required>
                 <span class="custom-file-label">Vyber soubor</span>
             </div>
 
@@ -77,16 +81,7 @@ if(isset($_POST['add-article'])){
     &copy; 2025 Moje webová aplikace
 </footer>
 
-<script>
-    // Script pro zobrazení názvu vybraného souboru
-    const fileInput = document.querySelector('.custom-file input');
-    const fileLabel = document.querySelector('.custom-file-label');
 
-    fileInput.addEventListener('change', function() {
-        const fileName = this.files[0] ? this.files[0].name : "Vyber soubor";
-        fileLabel.textContent = fileName;
-    });
-</script>
 </body>
 </html>
 

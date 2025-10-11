@@ -27,16 +27,19 @@ class UserModel
             ':role_id' => 1
         ]);
     }
-    public function insertArticleToDatabase($article_name, $abstract, $file)
+    public function listAllReviewers()
     {
-        $sql = "INSERT INTO article(user_id, article_name, abstract, state,	file)VALUES (:user_id, :article_name, :abstract, :state, :file)";
+        $sql = "SELECT * FROM user WHERE role_id = 2";
         $stmt = $this->conn->prepare($sql);
-        return $stmt->execute([
-            'user_id' => $_SESSION['userId'],
-            ':article_name' => $article_name,
-            ':abstract' => $abstract,
-            ':state' => 2,
-            ':file' => $file
-        ]);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    public function getNameById($user_id)
+    {
+        $sql = "SELECT * FROM user WHERE user_id = :user_id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }

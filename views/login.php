@@ -1,21 +1,21 @@
 <?php
 
-use controllers\LoginController;
+use controllers\UserController;
 use model\UserModel;
 
 global $conn;
 include("../dbconfig.php");
-include("../controllers/LoginController.php");
+include("../controllers/UserController.php");
 $message = "";
 
 session_start();
 $UserModel = new UserModel($conn);
-$loginController = new LoginController($UserModel);
+$userController = new UserController($UserModel);
 
 if(isset($_POST['log-but'])){
     $login = $_POST["login"];
     $password = $_POST["password"];
-    $message = $loginController->login($login, $password);
+    $message = $userController->login($login, $password);
 }
 ?>
 
@@ -40,9 +40,6 @@ if(isset($_POST['log-but'])){
         <input type="submit" name="log-but" value="Přihlásit se">
     </form>
 
-    <form action="home.php" method="post">
-        <button type="submit">Pokračovat nepřihlášený</button>
-    </form>
 
     <form action="register.php" method="post">
         <button type="submit">Registrovat se</button>

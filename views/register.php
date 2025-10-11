@@ -1,15 +1,15 @@
 <?php
-use controllers\RegisterController;
+use controllers\UserController;
 use model\UserModel;
 
 global $conn;
 include("../dbconfig.php");
-include("../controllers/registerController.php");
+include("../controllers/UserController.php");
 $message = "";
 
 session_start();
 $userModel = new UserModel($conn);
-$registerController = new RegisterController($userModel);
+$userController = new UserController($userModel);
 
 if (isset($_POST['register'])) {
     $name = trim($_POST['name']);
@@ -18,7 +18,7 @@ if (isset($_POST['register'])) {
     $email = trim($_POST['email']);
     $password = password_hash($_POST['password-reg'], PASSWORD_DEFAULT);
 
-    $message = $registerController->register($name, $surname, $login, $email, $password);
+    $message = $userController->register($name, $surname, $login, $email, $password);
 
 }
 ?>
