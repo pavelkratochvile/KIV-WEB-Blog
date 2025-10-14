@@ -34,29 +34,37 @@ class UserController
             exit();
         }
         else{
-            return "Wrong login or password";
+            return "Špatné jméno nebo heslo.";
         }
     }
     public function register($name, $surname, $login, $email, $password){
-        if (empty($name) || empty($surname) || empty($login) || empty($email) || empty($_POST['password-reg'])) {
+        if (empty($name) || empty($surname) || empty($login) || empty($email) || empty($password)) {
             return "Vyplň všechna pole!";
         }
         else{
             $user = $this->userModel->getUserWithLogin($login);
             if(!$user){
                 if($this->userModel->insertUserToDatabase($name, $surname, $login, $email, $password)){
-                    return "Register success!";
+                    return "Registrace proběhla úspěšně!";
                 }
                 else{
-                    return "Register error!";
+                    return "Chyba v registraci!";
                 }
             }
             else{
-                return "Login already exists!";
+                return "Tento login je již registrovaný!";
             }
         }
     }
     public function getNameById($user_id){
         return $this->userModel->getNameById($user_id);
+    }
+    public function getAllUsers()
+    {
+        return $this->userModel->getAllUsers();
+    }
+    public function updateRoles($user_id, $role_id)
+    {
+        $this->userModel->updateRoles($user_id, $role_id);
     }
 }

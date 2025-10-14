@@ -63,4 +63,21 @@ class ReviewModel
         ]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function deleteReview($review_id){
+        $sql = "DELETE FROM review WHERE review_id = :review_id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([
+            ':review_id' => $review_id
+        ]);
+    }
+    public function hasUserReview($user_id, $article_id)
+    {
+        $sql = "SELECT COUNT(*) FROM review WHERE user_id = :user_id AND article_id = :article_id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([
+            ':user_id' => $user_id,
+            ':article_id' => $article_id
+        ]);
+        return $stmt->fetchColumn();
+    }
 }

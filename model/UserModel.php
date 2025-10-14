@@ -42,4 +42,16 @@ class UserModel
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+    public function getAllUsers(){
+        $sql = "SELECT * FROM user";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    public function updateRoles($user_id, $role_id){
+        $stmt = $this->conn->prepare("UPDATE user SET role_id = :role WHERE user_id = :id");
+        $stmt->bindParam(':role', $role_id, PDO::PARAM_INT);
+        $stmt->bindParam(':id', $user_id, PDO::PARAM_INT);
+        $stmt->execute();
+    }
 }

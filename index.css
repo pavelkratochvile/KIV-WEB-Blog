@@ -1,0 +1,212 @@
+/* ===== RESET A ZÁKLAD ===== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    width: 100%;
+    overflow-x: hidden;
+    background-color: #f2f4f8;
+    color: #333;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+    width: 100%;
+    background-color: #007BFF;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    flex-wrap: wrap;
+    color: white;
+}
+
+.navbar-brand a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+.navbar-menu {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+}
+
+.navbar-menu li a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s ease;
+}
+
+.navbar-menu li a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.navbar-menu form button {
+    background-color: #ff9800;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.navbar-menu form button:hover {
+    background-color: #cc7a00;
+    transform: scale(1.05);
+}
+
+/* ===== TITULKY ===== */
+.users-title {
+    text-align: center;
+    margin: 30px 0 20px 0;
+    color: #007BFF;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+/* ===== ODKAZY MIMO NAVBAR ===== */
+a {
+    color: #007BFF;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ===== TLAČÍTKA MIMO NAVBAR ===== */
+button {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+/* ===== RESPONZIVITA ===== */
+@media (max-width: 768px) {
+    .navbar-menu {
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .navbar-menu form button,
+    .navbar-menu li a {
+        width: 100%;
+        text-align: center;
+    }
+}
+/* ===== HLAVNÍ OBSAH ===== */
+.container {
+    width: 90%;
+    max-width: 1000px;
+    margin: 2rem auto 4rem auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+/* Titulek konference */
+.conference-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #007BFF;
+    margin-bottom: 1.5rem;
+}
+
+/* Sekční nadpisy */
+h2 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #0056b3;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #e0e7ef;
+    padding-bottom: 0.3rem;
+}
+
+h3 {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: #007BFF;
+    margin-top: 1.5rem;
+    margin-bottom: 0.8rem;
+}
+
+/* Odstavce */
+p {
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+/* Seznamy */
+ul {
+    list-style: disc inside;
+    margin: 1rem 0;
+    padding-left: 1rem;
+}
+
+ul li {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+/* Linky v main */
+.container a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+.container a:hover {
+    text-decoration: underline;
+}
+
+/* Responsivita pro menší obrazovky */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+        padding: 1.5rem;
+    }
+
+    h2 {
+        font-size: 1.4rem;
+    }
+
+    h3 {
+        font-size: 1.2rem;
+    }
+
+    p, ul li {
+        font-size: 0.95rem;
+    }
+}

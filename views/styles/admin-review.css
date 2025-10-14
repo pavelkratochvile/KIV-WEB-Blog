@@ -1,4 +1,19 @@
-/* Reset a zabránění přetékání */
+.form-message {
+    margin-top: 10px;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+/* červené chybové zprávy */
+.form-message.error-message {
+    color: #dc3545; /* červená */
+}
+
+/* zelené potvrzovací zprávy */
+.form-message.success-message {
+    color: #28a745; /* zelená */
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -7,13 +22,39 @@
 
 html, body {
     width: 100%;
-    overflow-x: hidden; /* zakáže horizontální scroll */
+    overflow-x: hidden;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f2f4f8;
     color: #333;
 }
 
-/* Navbar */
+.article-status div {
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 10px;
+    font-weight: 600;
+    border-radius: 12px; /* zaoblené rohy */
+    color: white;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1); /* jemný stín */
+}
+
+/* Čeká na posouzení - modré pozadí */
+.status-pending {
+    background-color: #007bff;
+}
+
+/* Schváleno - zelené pozadí */
+.status-approved {
+    background-color: #28a745;
+}
+
+/* Zamítnuto - červené pozadí */
+.status-rejected {
+    background-color: #dc3545;
+}
+
+/* ===== NAVBAR - BEZ ZMĚN ===== */
 .navbar {
     width: 100%;
     background-color: #007BFF;
@@ -43,13 +84,6 @@ html, body {
     flex-wrap: wrap;
 }
 
-.navbar-menu li {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: white;
-}
-
 .navbar-menu li a {
     color: white;
     text-decoration: none;
@@ -63,10 +97,8 @@ html, body {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Tlačítka */
-.navbar-menu form button,
-main form button {
-    background-color: #ff9800; /* oranžové */
+.navbar-menu form button {
+    background-color: #ff9800;
     color: white;
     border: none;
     padding: 0.5rem 1rem;
@@ -76,43 +108,153 @@ main form button {
     transition: background-color 0.2s ease;
 }
 
-.navbar-menu form button:hover,
-main form button:hover {
-    background-color: #cc7a00; /* tmavší oranžová */
+.navbar-menu form button:hover {
+    background-color: #cc7a00;
 }
 
-/* Jméno uživatele */
-.navbar-menu li span {
-    font-weight: 500;
-    color: white;
-}
-
-/* Hlavní obsah */
-main {
-    max-width: 1600px;
+/* ===== OBSAH ===== */
+.articles-container {
+    width: 80%;
+    max-width: 1200px;
     margin: 2rem auto;
-    padding: 0 2rem; /* padding zabrání přetékání */
+    background-color: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    padding: 2rem 3rem;
 }
 
-/* Responzivita */
+.articles-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+}
+
+.articles-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+.article-item {
+    background-color: #f0f4f8; /* světle modrošedé pozadí pro vizuální oddělení */
+    border-radius: 0.8rem;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* jemný stín */
+    border: 1px solid #e0e7ef; /* lehký okraj */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.article-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+}
+
+.article-name {
+    color: #007BFF;
+    font-size: 1.2rem;
+}
+
+.article-abstract {
+    margin-top: 10px;
+    margin-bottom: 15px;
+    background-color: #fff;
+    padding: 10px 15px;
+    border-radius: 6px;
+}
+
+.article-reviews {
+    background-color: #eef3f8;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.article-reviews-title {
+    color: #007BFF;
+    font-weight: 600;
+}
+
+.reviews-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.review-box {
+    display: flex;
+    background-color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.review-stars {
+    color: #FFD700;
+}
+
+/* ===== FORMULÁŘE A TLAČÍTKA ===== */
+.assign-reviewer-form,
+.approval-form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.reviewer-select {
+    flex: 1;
+    min-width: 180px;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+/* TLAČÍTKA */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    color: white;
+    transition: all 0.2s ease;
+    font-size: 1rem;
+    min-width: 140px;
+    text-align: center;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+}
+
+.btn-success {
+    background-color: #28a745;
+}
+.btn-success:hover {
+    background-color: #218838;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+}
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+/* ===== RESPONSIVITA ===== */
 @media (max-width: 768px) {
-    .navbar {
-        flex-direction: column;
-        align-items: flex-start;
+    .articles-container {
+        width: 95%;
+        padding: 1.5rem;
     }
 
-    .navbar-menu {
+    .assign-reviewer-form,
+    .approval-form {
         flex-direction: column;
-        width: 100%;
-        gap: 0.5rem;
-        margin-top: 0.5rem;
     }
 
-    .navbar-menu li,
-    .navbar-menu form button,
-    .navbar-menu li a,
-    main form button {
+    .btn, .reviewer-select {
         width: 100%;
-        text-align: center;
     }
 }

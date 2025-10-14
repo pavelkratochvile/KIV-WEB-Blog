@@ -31,4 +31,11 @@ class ReviewController
     {
         return $this->reviewModel->listAllArticleReviews($article_id);
     }
+    public function deleteReview($review_id){
+        $this->reviewModel->deleteReview($review_id);
+    }
+    public function hasUserReview($user_id, $article_id)
+    {
+        return $this->reviewModel->hasUserReview($user_id, $article_id);
+    }
 }

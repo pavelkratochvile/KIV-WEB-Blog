@@ -1,0 +1,182 @@
+/* Reset a základní font */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    width: 100%;
+    overflow-x: hidden;
+    background-color: #f2f4f8;
+    color: #333;
+}
+
+/* ===== NAVBAR STEJNÝ STYL ===== */
+.navbar {
+    width: 100%;
+    background-color: #007BFF;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    flex-wrap: wrap;
+    color: white;
+}
+
+.navbar-brand a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+.navbar-menu {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+}
+
+.navbar-menu li a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s ease;
+}
+
+.navbar-menu li a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.navbar-menu form button {
+    background-color: #ff9800;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.navbar-menu form button:hover {
+    background-color: #cc7a00;
+    transform: scale(1.05);
+}
+
+/* ===== TITULKY ===== */
+.users-title {
+    text-align: center;
+    margin: 30px 0 20px 0;
+    color: #007BFF;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+/* ===== TABULKA ===== */
+.user-management-form {
+    width: 90%;
+    max-width: 1000px;
+    margin: 0 auto 40px auto;
+}
+
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.user-table th,
+.user-table td {
+    padding: 12px 15px;
+    text-align: left;
+}
+
+.user-table thead {
+    background-color: #007BFF;
+    color: white;
+    font-weight: 600;
+}
+
+.user-table tbody tr:nth-child(even) {
+    background-color: #f2f4f8;
+}
+
+.user-table tbody tr:hover {
+    background-color: #e3f2fd;
+}
+
+/* ===== SELECT ROLE ===== */
+.role-select {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.role-select:hover {
+    border-color: #007BFF;
+}
+
+.role-select-locked {
+    background-color: #e0e0e0;
+    color: #7f8c8d;
+    cursor: not-allowed;
+}
+
+/* ===== TLAČÍTKA ===== */
+.form-actions {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    color: white;
+    transition: all 0.2s ease;
+    font-size: 1rem;
+    min-width: 140px;
+    text-align: center;
+}
+
+.save-btn {
+    background-color: #28a745;
+}
+
+.save-btn:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+/* ===== RESPONZIVITA ===== */
+@media (max-width: 768px) {
+    .user-management-form {
+        width: 95%;
+    }
+
+    .role-select {
+        width: 100%;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}

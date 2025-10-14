@@ -53,17 +53,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['review_id'])) {
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
-    <link rel="stylesheet" href="styles/review-home-page.css">
+    <link rel="stylesheet" href="styles/review-home-page.css?v=1.2">
 
 </head>
 <body>
 
 <nav class="navbar">
     <div class="navbar-brand">
-        <a href="user-home-page.php">Moje Webová Stránka</a>
+        <a href="review-home-page.php">Moje Webová Stránka</a>
     </div>
     <ul class="navbar-menu">
-        <li><a href="user-home-page.php">Home</a></li>
+        <li><a href="review-home-page.php">Home</a></li>
         <?php if(isset($_SESSION['login'])): ?>
             <li>
                 <?php echo htmlspecialchars($_SESSION['name'] . " " . $_SESSION['surname']); ?>
@@ -78,45 +78,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['review_id'])) {
     </ul>
 </nav>
 
-<main>
-    <?php if (isset($_SESSION['login'])): ?>
-        <h2>Home</h2>
-        <p>Vítejte, recenzente!</p>
 
-    <?php else: ?>
-        <h1>Jste zde jako nepřihlášený uživatel</h1>
-        <form action="login.php" method="post">
-            <button type="submit">Přihlásit se</button>
-        </form>
-    <?php endif; ?>
-</main>
-<h1>Publikované recenze</h1>
+
+<h1 class="reviews-title">Publikované recenze</h1>
 
 <?php if (!empty($reviews)): ?>
-    <ul>
+    <ul class="reviews-list">
         <?php foreach ($reviews as $review): ?>
             <?php $currentArticle = $articleController->getArticleById($review['article_id']); ?>
-            <li>
-                <div>
-                    <!-- Ostatní recenze pro stejný článek -->
+            <li class="review-item">
+                <div class="review-card">
+
                     <?php
                     $foreign_reviews = $reviewController->listAllArticleReviews($review['article_id']);
                     ?>
-
                     <?php if (!empty($foreign_reviews)): ?>
-                        <div>
+                        <div class="other-reviews">
                             <strong>Další recenze:</strong>
-                            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                            <div class="other-reviews-list">
                                 <?php foreach ($foreign_reviews as $f_review): ?>
-                                    <div style="border:1px solid #ccc; padding:5px 10px; border-radius:5px;">
+                                    <div class="other-review">
                                         <?php
                                         $reviewer = $userController->getNameById($f_review['user_id']);
-                                        if($reviewer['name'] == $_SESSION['login']){
-                                            echo "Moje recenze ";
-                                        }
-                                        else{
-                                            echo $reviewer['name'] . " " . $reviewer['surname'];
-                                        }
+                                        echo $reviewer['name'] === $_SESSION['login'] ? "Moje recenze " : $reviewer['name'] . " " . $reviewer['surname'];
 
                                         $f_rating = (int)$f_review['total'];
                                         for ($i = 1; $i <= 5; $i++) {
@@ -125,67 +109,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['review_id'])) {
                                         ?>
                                     </div>
                                 <?php endforeach; ?>
-                                <?php if($review['state'] == 0){
-                                    echo"Zamítnuta";
-                                }
-                                else if($review['state'] == 1){
-                                    echo"Schválena";
-                                }
-                                else if($review['state'] == 2){
-                                    echo"Odevzdána";
-                                }
-                                else if($review['state'] == 3){
-                                    echo"Přidělena";
-                                }?>
+                                <div class="review-status">
+                                    <?php
+                                    switch ($review['state']) {
+                                        case 0: echo "Zamítnuta"; break;
+                                        case 1: echo "Schválena"; break;
+                                        case 2: echo "Odevzdána"; break;
+                                        case 3: echo "Přidělena"; break;
+                                    }
+                                    ?>
+                                </div>
                             </div>
                         </div>
                     <?php endif; ?>
 
-                    <!-- Info o článku -->
-                    <div>
+                    <div class="article-info">
                         <strong>Článek:</strong>
-                        <?= htmlspecialchars(isset($currentArticle['article_name']) ? $currentArticle['article_name'] : 'NULL') ?><br>
+                        <?= htmlspecialchars($currentArticle['article_name'] ?? 'NULL') ?><br>
                         <strong>Autor/Abstrakt:</strong>
-                        <?= htmlspecialchars(isset($currentArticle['abstract']) ? $currentArticle['abstract'] : 'NULL') ?><br>
+                        <?= htmlspecialchars($currentArticle['abstract'] ?? 'NULL') ?><br>
                     </div>
 
-                        <!-- Tlačítko pro otevření formuláře -->
-                        <button class="toggle-review-btn">Recenzovat</button>
+                    <a class="download-btn" href="<?= htmlspecialchars($currentArticle['file']) ?>" download>Stáhnout PDF</a>
 
-                        <!-- Skrytý formulář -->
-                        <form method="post" class="review-form" style="display: none;">
-                            <input type="hidden" name="review_id" value="<?= htmlspecialchars($review['review_id']) ?>">
+                    <button class="toggle-review-btn">Recenzovat</button>
 
-                            <hr>
-                            <h4>Posuzované vlastnosti:</h4>
+                    <form method="post" class="review-form" style="display: none;">
+                        <input type="hidden" name="review_id" value="<?= htmlspecialchars($review['review_id']) ?>">
+                        <hr>
+                        <h4>Posuzované vlastnosti:</h4>
 
-                            <label>Celkové hodnocení:
-                                <input type="number" step="0.5" name="total"
-                                       value="<?= htmlspecialchars(isset($review['total']) ? $review['total'] : '') ?>">
-                            </label><br>
+                        <label>Celkové hodnocení:
+                            <input type="number" step="0.5" name="total" value="<?= htmlspecialchars($review['total'] ?? '') ?>">
+                        </label><br>
 
-                            <label>Jazyk:
-                                <input type="number" step="0.5" name="language"
-                                       value="<?= htmlspecialchars(isset($review['language']) ? $review['language'] : '') ?>">
-                            </label><br>
+                        <label>Jazyk:
+                            <input type="number" step="0.5" name="language" value="<?= htmlspecialchars($review['language'] ?? '') ?>">
+                        </label><br>
 
-                            <label>Obsah:
-                                <input type="number" step="0.5" name="content"
-                                       value="<?= htmlspecialchars(isset($review['content']) ? $review['content'] : '') ?>">
-                            </label><br>
+                        <label>Obsah:
+                            <input type="number" step="0.5" name="content" value="<?= htmlspecialchars($review['content'] ?? '') ?>">
+                        </label><br>
 
-                            <label>Novost:
-                                <input type="number" step="0.5" name="novelty"
-                                       value="<?= htmlspecialchars(isset($review['novelty']) ? $review['novelty'] : '') ?>">
-                            </label><br><br>
+                        <label>Novost:
+                            <input type="number" step="0.5" name="novelty" value="<?= htmlspecialchars($review['novelty'] ?? '') ?>">
+                        </label><br><br>
 
-                            <h4>Vlastní komentář:</h4>
-                            <textarea name="comment" rows="4" cols="50"><?= htmlspecialchars($review['comment']) ?></textarea><br><br>
+                        <h4>Vlastní komentář:</h4>
+                        <textarea name="comment" rows="4" cols="50"><?= htmlspecialchars($review['comment']) ?></textarea><br><br>
 
-                            <button type="submit">Uložit recenzi</button>
-                            <button type="button" class="cancel-btn">Zrušit</button>
-                        </form>
-                    </div>
+                        <button type="submit" class="save-review-btn">Uložit recenzi</button>
+                        <button type="button" class="cancel-review-btn">Zrušit</button>
+                    </form>
                 </div>
             </li>
         <?php endforeach; ?>
@@ -209,6 +184,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['review_id'])) {
                 } else {
                     form.style.display = 'block';
                     this.textContent = 'Skrýt formulář';
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const buttons = document.querySelectorAll(".toggle-btn");
+
+        buttons.forEach(button => {
+            button.addEventListener("click", () => {
+                const targetId = button.getAttribute("data-target");
+                const target = document.getElementById(targetId);
+
+                if (target.style.display === "none" || target.style.display === "") {
+                    target.style.display = "block";
+                    button.textContent = "Skrýt";
+                } else {
+                    target.style.display = "none";
+                    button.textContent = "Zobrazit";
                 }
             });
         });

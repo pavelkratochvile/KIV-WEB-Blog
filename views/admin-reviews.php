@@ -11,8 +11,10 @@ include("../dbconfig.php");
 include("../controllers/ArticleController.php");
 include("../controllers/UserController.php");
 include("../controllers/ReviewController.php");
-$message = "";
-$addreviewmessage = "";
+$confirmmessage = "";
+$declinemessage = "";
+$confirmaddreviewmessage = "";
+$declineaddreviewmessage = "";
 
 session_start();
 $articleModel = new ArticleModel($conn);
@@ -34,30 +36,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         switch ($action) {
             case 'approve':
                 $articleController->changeState($article_id, 1);
-                break;
+                header("Location: admin-reviews.php");
+                exit;
 
             case 'reject':
                 $articleController->changeState($article_id, 0);
-                break;
+                header("Location: admin-reviews.php");
+                exit;
 
             default:
-                echo "Neznámá akce!";
+                $confirmmessage = "Neznámá akce!";
         }
-    } else {
-        echo "Chybí ID článku nebo akce!";
     }
-
-    if (!empty($_POST['article_id']) && !empty($_POST['reviewer_id'])) {
+    elseif (!empty($_POST['article_id']) && !empty($_POST['reviewer_id'])) {
         if($reviewController->articleReviewersCount($_POST['article_id']) <= 2){
-            $reviewController->addReview($_POST['article_id'], $_POST['reviewer_id']);
-            header("Location: admin-reviews.php?success=1");
-            exit;
+            if($reviewController->hasUserReview($_POST['reviewer_id'], $_POST['article_id']) < 1){
+                $confirmaddreviewmessage = "Recenzent byl přidán.";
+                $reviewController->addReview($_POST['article_id'], $_POST['reviewer_id']);
+                header("Location: admin-reviews.php?success=1");
+                exit;
+            }
+            elseif ($reviewController->hasUserReview($_POST['reviewer_id'], $_POST['article_id']) >= 1){
+                $declineaddreviewmessage = "Tento uživatel již daný článek recenzuje";
+            }
         }
         else{
-            $addreviewmessage = "Přesáhli jste počet recenzentů pro článek.";
+            $declineaddreviewmessage = "Přesáhli jste počet recenzentů pro článek.";
         }
-    } else {
-        $addreviewmessage = "Chybí článek nebo recenzent.";
+    }
+
+    elseif (!empty($_POST['review_id'])){
+        $reviewController->deleteReview($_POST['review_id']);
     }
 }
 ?>
@@ -66,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
-    <link rel="stylesheet" href="styles/user-home-page.css">
+    <link rel="stylesheet" href="styles/admin-review.css?v=1.2">
 </head>
 <body>
 
@@ -86,76 +95,105 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </form>
             </li>
         <?php endif; ?>
-
     </ul>
 </nav>
 
+<main class="articles-container">
+    <h1 class="articles-title">Publikované články</h1>
 
-<h1>Publikované články</h1>
+    <?php if (isset($_GET['success']) && $_GET['success'] == 1): ?>
+        <p class="form-message success-message">Recenzent byl přidán.</p>
+    <?php endif; ?>
 
-<?php if (!empty($articles)): ?>
-    <ul>
-        <?php foreach ($articles as $article): ?>
-            <li>
-                <strong><?= htmlspecialchars($article['article_name']) . ": " . htmlspecialchars($article['authors']);
-                    ?></strong><br>
-                <?= htmlspecialchars($article['abstract']) ?>
+    <?php if (isset($declineaddreviewmessage)): ?>
+        <p class="form-message error-message"><?= htmlspecialchars($declineaddreviewmessage) ?></p>
+    <?php endif; ?>
 
-
-                <?php $foreign_reviews = $reviewController->listAllArticleReviews($article['article_id']) ?>
-
-
-                <?php if (!empty($foreign_reviews)): ?>
-                    <div>
-                        <strong>Další recenze:</strong>
-                        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                            <?php foreach ($foreign_reviews as $f_review): ?>
-                                <div style="border:1px solid #ccc; padding:5px 10px; border-radius:5px;">
-                                    <?php
-                                    $reviewer = $userController->getNameById($f_review['user_id']);
-                                    if ($reviewer['name'] == $_SESSION['login']) {
-                                        echo "Moje recenze ";
-                                    } else {
-                                        echo htmlspecialchars($reviewer['name']) . " " . htmlspecialchars($reviewer['surname']);
-                                    }
-
-                                    $f_rating = (int)$f_review['total'];
-                                    for ($i = 1; $i <= 5; $i++) {
-                                        echo $i <= $f_rating ? '★' : '☆';
-                                    }
-                                    ?>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
+    <?php if (!empty($articles)): ?>
+        <ul class="articles-list">
+            <?php foreach ($articles as $article): ?>
+                <li class="article-item">
+                    <div class="article-status">
+                        <?php if ($article['state'] == 2): ?>
+                            <div class="status-pending">Čeká na posouzení</div>
+                        <?php elseif ($article['state'] == 1): ?>
+                            <div class="status-approved">Článek je schválen</div>
+                        <?php elseif ($article['state'] == 0): ?>
+                            <div class="status-rejected">Článek je zamítnut</div>
+                        <?php endif; ?>
                     </div>
-                <?php endif; ?>
+                    <div class="article-header">
+                        <strong class="article-name">
+                            <?= htmlspecialchars($article['authors']) . ": " . htmlspecialchars($article['article_name']); ?>
+                        </strong>
+                    </div>
 
-                <form method="POST" action="admin-reviews.php">
-                    <select name="reviewer_id">
-                        <option value="">Vyber recenzenta</option>
-                        <?php foreach ($reviewers as $r): ?>
-                            <option value="<?= htmlspecialchars($r['user_id']) ?>">
-                                <?= htmlspecialchars($r['name']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
+                    <div class="article-abstract">
+                        <?= htmlspecialchars($article['abstract']) ?>
+                    </div>
 
-                    <input type="hidden" name="article_id" value="<?= $article['article_id'] ?>">
-                    <button type="submit" class="btn btn-success">Přidat</button>
-                </form>
+                    <?php $foreign_reviews = $reviewController->listAllArticleReviews($article['article_id']); ?>
 
-                <form method="POST" action="admin-reviews.php">
-                    <input type="hidden" name="article_id" value="<?= $article['article_id'] ?>">
-                    <button type="submit" name="action" value="approve" class="btn btn-success">Schválit</button>
-                    <button type="submit" name="action" value="reject" class="btn btn-danger">Zamítnout</button>
-                </form>
+                    <?php if (!empty($foreign_reviews)): ?>
+                        <div class="article-reviews">
+                            <strong class="article-reviews-title">Další recenze:</strong>
+                            <div class="reviews-container">
+                                <?php foreach ($foreign_reviews as $f_review): ?>
+                                    <div class="review-box">
+                                        <?php
+                                        $reviewer = $userController->getNameById($f_review['user_id']);
+                                        if ($reviewer['name'] == $_SESSION['login']) {
+                                            echo "<span class='review-author my-review'>Moje recenze</span> ";
+                                        } else {
+                                            echo "<span class='review-author'>"
+                                                . htmlspecialchars($reviewer['name']) . " "
+                                                . htmlspecialchars($reviewer['surname']) .
+                                                "</span> ";
+                                        }
 
-            </li>
-        <?php endforeach; ?>
-    </ul>
-<?php else: ?>
-    <p>Žádné články nebyly nalezeny.</p>
-<?php endif; ?>
+                                        $f_rating = (int)$f_review['total'];
+                                        echo "<span class='review-stars'>";
+                                        for ($i = 1; $i <= 5; $i++) {
+                                            echo $i <= $f_rating ? '★' : '☆';
+                                        }
+                                        echo "</span>";
+                                        ?>
+                                        <form method="POST" action="admin-reviews.php">
+                                            <input type="hidden" name="review_id" value="<?= $f_review['review_id'] ?>">
+                                            <button type="submit" style="color:red; font-size:1.2rem;">❌</button>
+                                        </form>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
+                    <form method="POST" action="admin-reviews.php" class="assign-reviewer-form">
+                        <select name="reviewer_id" class="reviewer-select">
+                            <option value="">Vyber recenzenta</option>
+                            <?php foreach ($reviewers as $r): ?>
+                                <option value="<?= htmlspecialchars($r['user_id']) ?>">
+                                    <?= htmlspecialchars($r['name']) . " " . htmlspecialchars($r['surname'])?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+
+                        <input type="hidden" name="article_id" value="<?= $article['article_id'] ?>">
+                        <button type="submit" class="btn btn-success">Přidat</button>
+                    </form>
+
+                    <form method="POST" action="admin-reviews.php" class="approval-form">
+                        <input type="hidden" name="article_id" value="<?= $article['article_id'] ?>">
+                        <button type="submit" name="action" value="approve" class="btn btn-success">Schválit</button>
+                        <button type="submit" name="action" value="reject" class="btn btn-danger">Zamítnout</button>
+                    </form>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    <?php else: ?>
+        <p class="no-articles-message">Žádné články nebyly nalezeny.</p>
+    <?php endif; ?>
+</main>
 
 </body>
 </html>

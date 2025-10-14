@@ -16,10 +16,17 @@ if (isset($_POST['register'])) {
     $surname = trim($_POST['surname']);
     $login = trim($_POST['login']);
     $email = trim($_POST['email']);
-    $password = password_hash($_POST['password-reg'], PASSWORD_DEFAULT);
 
-    $message = $userController->register($name, $surname, $login, $email, $password);
+    $password1 = trim($_POST['password-reg1']);
+    $password2 = trim($_POST['password-reg2']);
 
+    if($password1 != $password2) {
+        $message = "Hesla se neshodují!";
+    }
+    else{
+        $password = password_hash($password1, PASSWORD_DEFAULT);
+        $message = $userController->register($name, $surname, $login, $email, $password);
+    }
 }
 ?>
 
@@ -44,7 +51,10 @@ if (isset($_POST['register'])) {
         <input type="text" name="login" required>
 
         <label>Heslo</label>
-        <input type="password" name="password-reg" required>
+        <input type="password" name="password-reg1" required>
+
+        <label>Heslo</label>
+        <input type="password" name="password-reg2" required>
 
         <label>Email</label>
         <input type="email" name="email" required>

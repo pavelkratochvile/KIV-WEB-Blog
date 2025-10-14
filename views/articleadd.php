@@ -14,13 +14,29 @@ $articleAddController = new ArticleController($articleModel);
 if(isset($_POST['add-article'])){
     $articleName = $_POST['articleName'];
     $abstract = $_POST['abstract'];
-    $file = $_POST['file'];
     $authors = $_POST['authors'];
 
-    $message = $articleAddController->addArticle($articleName, $abstract, $file, $authors);
-}
+    if(isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK){
+        $fileTmpPath = $_FILES['file']['tmp_name'];
+        $fileName = $_FILES['file']['name'];
+        $fileName = preg_replace("/[^a-zA-Z0-9\.\-_]/", "_", $fileName); // bezpečný název
 
+        $uploadDir = 'C:/xampp/htdocs/website/pdf/';
+        $destPath = $uploadDir . $fileName;
+
+        if(move_uploaded_file($fileTmpPath, $destPath)){
+            $filePathForDB = '../pdf/' . $fileName;
+            // předáváme relativní cestu do controlleru
+            $message = $articleAddController->addArticle($articleName, $abstract, $filePathForDB, $authors);
+        } else {
+            $message = "Nepodařilo se nahrát soubor.";
+        }
+    } else {
+        $message = "Soubor nebyl vybrán nebo došlo k chybě při nahrávání.";
+    }
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="cs">
 <head>
@@ -34,7 +50,7 @@ if(isset($_POST['add-article'])){
         <a href="user-home-page.php">Moje Webová Stránka</a>
     </div>
     <ul class="navbar-menu">
-        <li><a href="user-home-page.php">Home</a></li>
+        <li><a href="user-home-page.php">Publikované články</a></li>
         <?php if(isset($_SESSION['login'])): ?>
             <li>
                 <?php echo htmlspecialchars($_SESSION['name'] . " " . $_SESSION['surname']); ?>
@@ -64,7 +80,7 @@ if(isset($_POST['add-article'])){
 
             <label for="file">Soubor</label>
             <div class="custom-file">
-                <input type="text" id="file" name="file" required>
+                <input type="file" id="file" name="file" required>
                 <span class="custom-file-label">Vyber soubor</span>
             </div>
 
@@ -76,6 +92,7 @@ if(isset($_POST['add-article'])){
         <?php endif; ?>
     </section>
 </main>
+
 
 <footer>
     &copy; 2025 Moje webová aplikace
