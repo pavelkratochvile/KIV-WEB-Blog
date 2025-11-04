@@ -26,7 +26,6 @@ if(isset($_POST['add-article'])){
 
         if(move_uploaded_file($fileTmpPath, $destPath)){
             $filePathForDB = '../pdf/' . $fileName;
-            // předáváme relativní cestu do controlleru
             $message = $articleAddController->addArticle($articleName, $abstract, $filePathForDB, $authors);
         } else {
             $message = "Nepodařilo se nahrát soubor.";

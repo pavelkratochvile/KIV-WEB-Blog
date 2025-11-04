@@ -77,9 +77,6 @@ $users = $userController->getAllUsers();
                 <td class="user-name"><?= htmlspecialchars($u['name'] . ' ' . $u['surname']) ?></td>
                 <td class="user-role-cell">
                     <?php
-                    // Zamknout select, pokud:
-                    // 1. Přihlaš. uživatel je admin a chce měnit jiného admina/superadmina
-                    // 2. Přihlaš. uživatel je sám sebe
                     $isLocked = ($_SESSION['userRole'] == 3 && ($u['role_id'] == 3 || $u['role_id'] == 4))
                         || ($u['user_id'] == $_SESSION['userId']);
                     ?>
@@ -90,7 +87,7 @@ $users = $userController->getAllUsers();
                     >
                         <?php foreach ($roles as $id => $roleName): ?>
                             <?php
-                            // Superadmin (4) nemůže být přiřazen, ale pokud je aktuální role Superadmin, zobrazíme ji jako selected
+
                             if ($id == 4 && $u['role_id'] != 4) continue;
                             ?>
                             <option value="<?= $id ?>" <?= $id == $u['role_id'] ? 'selected' : '' ?>>

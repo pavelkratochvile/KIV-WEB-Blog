@@ -15,7 +15,7 @@ class ArticleModel
         return $stmt->execute([
             ':user_id' => $_SESSION['userId'],
             ':article_name' => $articleName,
-            ':abstract' => $abstract,
+            ':abstract' => htmlspecialchars($abstract),
             ':state' => 2,
             ':file' => $filePathForDB,
             ':authors' => $authors
